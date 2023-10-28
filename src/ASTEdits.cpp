@@ -36,7 +36,8 @@ void RuleActionEditCollector::run(
     return;
   }
 
-#if CLANG_VERSION_MAJOR == 15 || CLANG_VERSION_MAJOR == 16
+#if CLANG_VERSION_MAJOR == 15 || CLANG_VERSION_MAJOR == 16 ||                  \
+    CLANG_VERSION_MAJOR <= 18
   Expected<SmallVector<transformer::Edit, 1>> Edits =
       Rule.Cases[findSelectedCase(Result, Rule)].Edits(Result);
 #elif CLANG_VERSION_MAJOR == 14
@@ -54,7 +55,7 @@ void RuleActionEditCollector::run(
   auto SM = Result.SourceManager;
   for (const auto &T : *Edits) {
     assert(T.Kind == transformer::EditKind::Range);
-#if CLANG_VERSION_MAJOR == 16
+#if CLANG_VERSION_MAJOR >= 16
     const auto *Metadata = T.Metadata.has_value()
                                ? llvm::any_cast<EditMetadataKind>(&T.Metadata)
                                : nullptr;
